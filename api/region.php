@@ -8,7 +8,13 @@ function cached_get($url, $ttl, $cacheDir) {
   $key = $cacheDir . '/' . sha1($url) . '.json';
   if (file_exists($key) && (time() - filemtime($key)) < $ttl) return file_get_contents($key);
   $ch = curl_init($url);
-  curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>15, CURLOPT_USERAGENT=>'GOAT/1.0']);
+  curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT => 12,
+    CURLOPT_CONNECTTIMEOUT => 5,
+    CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+    CURLOPT_USERAGENT => 'GOAT/2.0 (+kitt.net)'
+  ]);
   $res = curl_exec($ch);
   $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
   curl_close($ch);
