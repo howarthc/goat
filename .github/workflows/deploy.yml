@@ -28,6 +28,3 @@ jobs:
         run: |
           find /var/www/kitt/agile -type d -exec chmod 2775 {} \;
           find /var/www/kitt/agile -type f -exec chmod 664 {} \;
-
-      - name: Reload Apache (optional)
-        run: sudo systemctl reload apache2
