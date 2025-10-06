@@ -1,39 +1,32 @@
-name: Deploy to Server
+name: Deploy (self-hosted)
+
 on:
   push:
     branches: [ main ]
 
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, agile-prod]
+    permissions:
+      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Add host key
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
-
-      - name: Rsync files
+      - name: Deploy to /var/www/kitt/agile
         run: |
           rsync -az --delete \
             --exclude ".git/" \
             --exclude ".github/" \
-            ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PATH }}/
+            ./ /var/www/kitt/agile/
 
-      - name: Post-deploy hook (optional)
+      - name: Fix permissions (group writable, www-data readable)
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-          set -e
-          cd ${{ secrets.SERVER_PATH }}
-          # Example: PHP perms or build step
-          # find . -type d -exec chmod 755 {} \;
-          # find . -type f -exec chmod 644 {} \;
-          # systemctl reload apache2 || true
-          EOF
+          find /var/www/kitt/agile -type d -exec chmod 2775 {} \;
+          find /var/www/kitt/agile -type f -exec chmod 664 {} \;
+
+      - name: Reload Apache (optional)
+        run: sudo systemctl reload apache2
