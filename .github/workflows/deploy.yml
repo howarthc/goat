@@ -3,6 +3,7 @@ name: Deploy (self-hosted)
 on:
   push:
     branches: [ main ]
+  workflow_dispatch: {}   # <-- add this line
 
 concurrency:
   group: deploy-production
