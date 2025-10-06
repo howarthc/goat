@@ -1,6 +1,6 @@
 {
-  "name": "Agile Rates",
-  "short_name": "Agile",
+  "name": "GOAT: Greatest Octopus Agile Tracker",
+  "short_name": "GOAT",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
