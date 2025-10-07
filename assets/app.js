@@ -1,5 +1,5 @@
-// GOAT v0.8
-const VERSION = '0.8';
+// GOAT v0.9
+const VERSION = '0.9';
 const statusEl = document.getElementById('status');
 const gridEl = document.getElementById('grid');
 const form = document.getElementById('loc');
@@ -13,18 +13,18 @@ function setPostcodeInURL(pc){ const u=new URL(location.href); u.searchParams.se
 function loadInitialPostcode(){ return getPostcodeFromURL() || localStorage.getItem('goat_postcode') || ''; }
 function savePostcode(pc){ localStorage.setItem('goat_postcode', pc); setPostcodeInURL(pc); }
 
-// Colour mapping (royal blue -> white -> yellow -> red)
+// Colour mapping (as v0.8): < -10 royal blue; -10..0 blue->white; 0..13 white->yellow; 13..27 yellow->red; >27 red
 const stops = [
-  {v:-10, c:[65,105,225]},  // royalblue
-  {v:0,   c:[255,255,255]}, // white
-  {v:13,  c:[255,255,0]},   // yellow
-  {v:27,  c:[255,0,0]}      // red
+  {v:-10, c:[65,105,225]},
+  {v:0,   c:[255,255,255]},
+  {v:13,  c:[255,255,0]},
+  {v:27,  c:[255,0,0]}
 ];
 function lerp(a,b,t){ return a + (b-a)*t; }
 function lerpColor(c1,c2,t){ return [Math.round(lerp(c1[0],c2[0],t)), Math.round(lerp(c1[1],c2[1],t)), Math.round(lerp(c1[2],c2[2],t))]; }
 function colorForValue(v){
-  if (v <= stops[0].v) return `rgb(${stops[0].c.join(',')})`;                // < -10 -> royal blue
-  if (v >= stops[stops.length-1].v) return `rgb(${stops[stops.length-1].c.join(',')})`; // > 27 -> red
+  if (v <= stops[0].v) return `rgb(${stops[0].c.join(',')})`;
+  if (v >= stops[stops.length-1].v) return `rgb(${stops[stops.length-1].c.join(',')})`;
   for (let i=0;i<stops.length-1;i++){
     const a=stops[i], b=stops[i+1];
     if (v >= a.v && v <= b.v) {
@@ -61,14 +61,17 @@ async function fetchRates(gsp, fromISO, toISO){
 }
 
 function computeSummary(rates){
-  const now=Date.now(); let currentIdx=-1,nextIdx=-1,cheapIdx=-1,cheapVal=Infinity;
+  const now=Date.now();
+  let currentIdx=-1,nextIdx=-1,cheapIdx=-1,expIdx=-1;
+  let cheapVal=Infinity, expVal=-Infinity;
   for(let i=0;i<rates.length;i++){
     const s=Date.parse(rates[i].start), e=Date.parse(rates[i].end), v=Number(rates[i].price_inc_vat_p_per_kwh);
     if(now>=s && now<e) currentIdx=i;
     if(s>now && nextIdx===-1) nextIdx=i;
     if(s>=now && v<cheapVal){ cheapVal=v; cheapIdx=i; }
+    if(s>=now && v>expVal){ expVal=v; expIdx=i; }
   }
-  return {currentIdx,nextIdx,cheapIdx};
+  return {currentIdx,nextIdx,cheapIdx,expIdx};
 }
 function setTopCell(idBase, startISO, endISO, price){
   const timeEl = document.getElementById(`${idBase}-time`);
@@ -87,10 +90,11 @@ function render(rates){
   if(!Array.isArray(rates)||!rates.length) throw new Error('No data returned');
   rates = rates.slice().sort((a,b)=>a.start.localeCompare(b.start));
 
-  const { currentIdx, nextIdx, cheapIdx } = computeSummary(rates);
+  const { currentIdx, nextIdx, cheapIdx, expIdx } = computeSummary(rates);
   if (currentIdx >= 0) { const r = rates[currentIdx]; setTopCell('current', r.start, r.end, Number(r.price_inc_vat_p_per_kwh)); }
   if (nextIdx >= 0) { const r = rates[nextIdx]; setTopCell('next', r.start, r.end, Number(r.price_inc_vat_p_per_kwh)); }
   if (cheapIdx >= 0) { const r = rates[cheapIdx]; setTopCell('cheapest', r.start, r.end, Number(r.price_inc_vat_p_per_kwh)); }
+  if (expIdx >= 0) { const r = rates[expIdx]; setTopCell('expensive', r.start, r.end, Number(r.price_inc_vat_p_per_kwh)); }
 
   gridEl.innerHTML = `<tr><th>Start</th><th>End</th><th>Price</th><th>Trend</th></tr>` +
     rates.map((r,i)=>{

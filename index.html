@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GOAT: Greatest Octopus Agile Tracker — v0.8</title>
+  <title>GOAT: Greatest Octopus Agile Tracker — v0.9</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="assets/styles.css?v=0.8">
+  <link rel="stylesheet" href="assets/styles.css?v=0.9">
   <meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
@@ -22,11 +22,12 @@
 
   <main>
     <section class="top-table-wrap">
-      <table class="top-table" aria-label="Current, Next and Cheapest prices">
+      <table class="top-table" aria-label="Current, Next, Cheapest and Most Expensive prices">
         <tr>
           <th>Current</th>
           <th>Next</th>
           <th>Cheapest</th>
+          <th>Most Expensive</th>
         </tr>
         <tr id="top-row">
           <td id="cell-current">
@@ -41,6 +42,10 @@
             <div class="top-time" id="cheapest-time">--:--</div>
             <div class="top-price" id="cheapest-price">--</div>
           </td>
+          <td id="cell-expensive">
+            <div class="top-time" id="expensive-time">--:--</div>
+            <div class="top-price" id="expensive-price">--</div>
+          </td>
         </tr>
       </table>
     </section>
@@ -51,10 +56,10 @@
   </main>
 
   <footer>
-    <small>Data © Octopus Energy Agile Tariff. Times are Europe/London. — GOAT by Christopher Howarth — v0.8</small>
+    <small>Data © Octopus Energy Agile Tariff. Times are Europe/London. — GOAT by Christopher Howarth — v0.9</small>
   </footer>
 
-  <script src="assets/app.js?v=0.8"></script>
+  <script src="assets/app.js?v=0.9"></script>
   <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js'); </script>
 </body>
 </html>
