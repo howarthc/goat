@@ -1,7 +1,7 @@
 :root {
-  --max: 1000px;
+  --max: 1100px;
   --bg: #ffffff;
-  --fg: #111;
+  --fg: #121212;
   --muted: #666;
   --card-radius: 14px;
 }
@@ -16,24 +16,35 @@ h1 { margin: .25rem 0 0.75rem; font-size: clamp(1.4rem, 3.5vw, 2rem); }
 .postcode-form button:hover{ background:#efefef }
 #status{ margin-top:.25rem; min-height:1.1rem; color:var(--muted) }
 
-.summary { display:grid; grid-template-columns: 1fr; gap:.75rem; }
-.card { color:#fff; padding: .8rem 1rem; border-radius: var(--card-radius); box-shadow: 0 4px 14px rgba(0,0,0,.06); }
-.card-title { font-size: .95rem; letter-spacing:.04em; opacity:.9 }
-.card-time { font-size: clamp(.95rem, 2.8vw, 1.1rem); margin:.2rem 0 .1rem; opacity:.9 }
-.card-price { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 700; }
-.card.current { background: #5aa832; }  /* green */
-.card.next { background: #ef8b1a; }     /* orange */
-.card.cheapest { background: #0e8094; } /* teal default; may be overridden */
+/* Top section */
+.top-table-wrap { margin-top: .5rem; }
+.top-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+.top-table th { text-align: left; font-weight: 600; padding: .5rem .5rem; border-bottom: 1px solid #e8e8e8; }
+.top-table td { padding: .7rem .8rem; border-right: 8px solid #fff; border-bottom: 1px solid #f0f0f0; }
+.top-table td:last-child { border-right: 0; }
+.top-time { font-size: .95rem; opacity: .95; }
+.top-price { font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 800; line-height: 1.15; }
 
-.chart-wrap { margin-top: 1rem; width: 100%; height: 420px; }
+/* Chart */
+.chart-wrap { margin-top: 1rem; width: 100%; height: 440px; }
 #chart { width:100% !important; height:100% !important; display:block }
 
+/* Lower table */
 table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: .95rem; }
 th, td { border-bottom: 1px solid #eee; padding: .5rem; text-align: left; }
 tr:nth-child(even) td { background: #fafafa; }
-tr.now td { font-weight:700; background:#fff3cd }
+tr.now td { font-weight:700; outline: 2px solid #ffd24d; outline-offset: -2px; }
+td.price-cell { font-weight: 700; }
+td.price-cell span.price-text { position: relative; z-index: 1; }
+td.price-cell { position: relative; }
+td.price-cell::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 4px;
+}
+td.trend-cell { width: 64px; text-align: center; }
+.trend-up { color: #d94b3d; font-weight: 900; }
+.trend-down { color: #2e7d32; font-weight: 900; }
+.trend-same { display: inline-block; width: 16px; height: 16px; background: #ef8b1a; border-radius: 2px; }
 
-@media (min-width: 760px) {
-  .summary { grid-template-columns: repeat(3, 1fr); }
+@media (min-width: 900px) {
   .chart-wrap { height: 520px; }
 }

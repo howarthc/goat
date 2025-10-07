@@ -21,7 +21,7 @@ $end   = $to   ? new DateTime($to,   $tz) : (clone $start)->modify('+36 hours');
 $pf = (clone $start)->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z');
 $pt = (clone $end)->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z');
 
-// Find Agile product code once per 12h
+// Product list (12h)
 $productsKey='products-agile';
 $products = goat_cache_read($productsKey, 43200);
 if (!$products) { $products = goat_fetch('https://api.octopus.energy/v1/products/?brand=OCTOPUS_ENERGY&page_size=250'); if ($products) goat_cache_write($productsKey, $products); }
