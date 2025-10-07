@@ -1,5 +1,5 @@
-// GOAT v0.7 (no chart)
-const VERSION = '0.7';
+// GOAT v0.8
+const VERSION = '0.8';
 const statusEl = document.getElementById('status');
 const gridEl = document.getElementById('grid');
 const form = document.getElementById('loc');
@@ -13,18 +13,18 @@ function setPostcodeInURL(pc){ const u=new URL(location.href); u.searchParams.se
 function loadInitialPostcode(){ return getPostcodeFromURL() || localStorage.getItem('goat_postcode') || ''; }
 function savePostcode(pc){ localStorage.setItem('goat_postcode', pc); setPostcodeInURL(pc); }
 
+// Colour mapping (royal blue -> white -> yellow -> red)
 const stops = [
-  {v:-10, c:[27,75,155]},
-  {v:0,   c:[255,255,255]},
-  {v:15,  c:[90,168,50]},
-  {v:27,  c:[255,210,60]},
-  {v:50,  c:[217,75,61]}
+  {v:-10, c:[65,105,225]},  // royalblue
+  {v:0,   c:[255,255,255]}, // white
+  {v:13,  c:[255,255,0]},   // yellow
+  {v:27,  c:[255,0,0]}      // red
 ];
 function lerp(a,b,t){ return a + (b-a)*t; }
 function lerpColor(c1,c2,t){ return [Math.round(lerp(c1[0],c2[0],t)), Math.round(lerp(c1[1],c2[1],t)), Math.round(lerp(c1[2],c2[2],t))]; }
 function colorForValue(v){
-  if (v <= stops[0].v) return `rgb(${stops[0].c.join(',')})`;
-  if (v >= stops[stops.length-1].v) return `rgb(${stops[stops.length-1].c.join(',')})`;
+  if (v <= stops[0].v) return `rgb(${stops[0].c.join(',')})`;                // < -10 -> royal blue
+  if (v >= stops[stops.length-1].v) return `rgb(${stops[stops.length-1].c.join(',')})`; // > 27 -> red
   for (let i=0;i<stops.length-1;i++){
     const a=stops[i], b=stops[i+1];
     if (v >= a.v && v <= b.v) {
@@ -36,7 +36,7 @@ function colorForValue(v){
   return `rgb(${stops[stops.length-1].c.join(',')})`;
 }
 function textColorForBg(rgbStr){
-  const m = rgbStr.match(/rgb\\((\\d+),(\\d+),(\\d+)\\)/);
+  const m = rgbStr.match(/rgb\((\d+),(\d+),(\d+)\)/);
   if (!m) return '#111';
   const r=+m[1], g=+m[2], b=+m[3];
   const L=(0.2126*r + 0.7152*g + 0.0722*b);
@@ -45,7 +45,7 @@ function textColorForBg(rgbStr){
 
 async function safeJson(res){
   const ct=res.headers.get('content-type')||''; const text=await res.text();
-  if (!ct.includes('application/json')) { throw new Error(`Expected JSON but got: ${text.split('\\n')[0].slice(0,160)}`); }
+  if (!ct.includes('application/json')) { throw new Error(`Expected JSON but got: ${text.split('\n')[0].slice(0,160)}`); }
   try { return JSON.parse(text); } catch(e){ throw new Error(`Bad JSON: ${e.message}`); }
 }
 async function getGspByPostcode(pc){
@@ -113,12 +113,9 @@ function render(rates){
       return `<tr${nowCls}>
         <td>${s}</td>
         <td>${e}</td>
-        <td class="price-cell"><span class="price-text" style="color:${fg}">${fmtMoney(val)}</span></td>
+        <td class="price-cell" style="background:${bg};color:${fg}"><span class="price-text">${fmtMoney(val)}</span></td>
         <td class="trend-cell">${trendHtml}</td>
-      </tr>
-      <style>
-        #grid tr:nth-child(${i+2}) td.price-cell::before { background: ${bg}; }
-      </style>`;
+      </tr>`;
     }).join('');
 }
 

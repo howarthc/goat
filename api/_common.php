@@ -6,7 +6,7 @@ function goat_fetch($url) {
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_TIMEOUT => 15,
       CURLOPT_CONNECTTIMEOUT => 5,
-      CURLOPT_USERAGENT => 'GOAT/0.7 (+kitt.net)',
+      CURLOPT_USERAGENT => 'GOAT/0.8 (+kitt.net)',
       CURLOPT_IPRESOLVE => defined('CURL_IPRESOLVE_V4') ? CURL_IPRESOLVE_V4 : 1,
     ]);
     $res = curl_exec($ch);
@@ -15,7 +15,7 @@ function goat_fetch($url) {
     if ($res !== false && $code >= 200 && $code < 300) return $res;
     return null;
   }
-  $opts = ['http' => ['method'=>'GET','timeout'=>15,'header'=>"User-Agent: GOAT/0.7 (+kitt.net)\r\n"]];
+  $opts = ['http' => ['method'=>'GET','timeout'=>15,'header'=>"User-Agent: GOAT/0.8 (+kitt.net)\r\n"]];
   $ctx = stream_context_create($opts);
   $res = @file_get_contents($url, false, $ctx);
   return $res ?: null;
