@@ -1,32 +1,25 @@
-// GOAT v0.6
-const VERSION = '0.6';
+// GOAT v0.7 (no chart)
+const VERSION = '0.7';
 const statusEl = document.getElementById('status');
 const gridEl = document.getElementById('grid');
-const ctx = document.getElementById('chart');
 const form = document.getElementById('loc');
 const postcodeInput = document.getElementById('postcode');
-
-let chart;
 
 const fmtMoney = p => `${Number(p).toFixed(1)}p`;
 const tzOpts = { hour: '2-digit', minute: '2-digit' };
 
-// persistence
 function getPostcodeFromURL(){ const u=new URL(location.href); return (u.searchParams.get('postcode')||'').trim(); }
 function setPostcodeInURL(pc){ const u=new URL(location.href); u.searchParams.set('postcode', pc); history.replaceState({},'',u.toString()); }
 function loadInitialPostcode(){ return getPostcodeFromURL() || localStorage.getItem('goat_postcode') || ''; }
 function savePostcode(pc){ localStorage.setItem('goat_postcode', pc); setPostcodeInURL(pc); }
 
-// ----- Colour temperature mapping (gradients) -----
-// Stops: [-10, blue] -> [0, white] -> [15, green] -> [27, yellow] -> [50, red]
 const stops = [
-  {v:-10, c:[27,75,155]},   // blue #1b4b9b
-  {v:0,   c:[255,255,255]}, // white
-  {v:15,  c:[90,168,50]},   // green #5aa832
-  {v:27,  c:[255,210,60]},  // yellow #ffd23c
-  {v:50,  c:[217,75,61]}    // red #d94b3d
+  {v:-10, c:[27,75,155]},
+  {v:0,   c:[255,255,255]},
+  {v:15,  c:[90,168,50]},
+  {v:27,  c:[255,210,60]},
+  {v:50,  c:[217,75,61]}
 ];
-
 function lerp(a,b,t){ return a + (b-a)*t; }
 function lerpColor(c1,c2,t){ return [Math.round(lerp(c1[0],c2[0],t)), Math.round(lerp(c1[1],c2[1],t)), Math.round(lerp(c1[2],c2[2],t))]; }
 function colorForValue(v){
@@ -50,7 +43,6 @@ function textColorForBg(rgbStr){
   return L < 140 ? '#fff' : '#111';
 }
 
-// API helpers
 async function safeJson(res){
   const ct=res.headers.get('content-type')||''; const text=await res.text();
   if (!ct.includes('application/json')) { throw new Error(`Expected JSON but got: ${text.split('\\n')[0].slice(0,160)}`); }
@@ -100,31 +92,6 @@ function render(rates){
   if (nextIdx >= 0) { const r = rates[nextIdx]; setTopCell('next', r.start, r.end, Number(r.price_inc_vat_p_per_kwh)); }
   if (cheapIdx >= 0) { const r = rates[cheapIdx]; setTopCell('cheapest', r.start, r.end, Number(r.price_inc_vat_p_per_kwh)); }
 
-  // Chart: ALL points (category axis)
-  const labels = rates.map(r => new Date(r.start).toLocaleTimeString('en-GB', tzOpts));
-  const values = rates.map(r => Number(r.price_inc_vat_p_per_kwh));
-  const colors = values.map(v => colorForValue(v));
-
-  if (chart) chart.destroy();
-  chart = new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets: [{ label:'p/kWh (inc VAT)', data: values, backgroundColor: colors, borderColor: colors, borderWidth: 1, maxBarThickness: 24 }] },
-    options: {
-      maintainAspectRatio:false,
-      parsing:false,
-      animation:false,
-      scales:{
-        x:{ type:'category', ticks:{ autoSkip:true, maxRotation:60, minRotation:60 } },
-        y:{ beginAtZero:true, title:{display:true, text:'Price (p/kWh)'} }
-      },
-      plugins:{
-        legend:{display:false},
-        tooltip:{ callbacks:{ label: ctx => fmtMoney(Number(ctx.raw)) } }
-      }
-    }
-  });
-
-  // Lower table with Trend column & coloured price cell
   gridEl.innerHTML = `<tr><th>Start</th><th>End</th><th>Price</th><th>Trend</th></tr>` +
     rates.map((r,i)=>{
       const s=new Date(r.start).toLocaleTimeString('en-GB', tzOpts);
@@ -132,14 +99,13 @@ function render(rates){
       const val = Number(r.price_inc_vat_p_per_kwh);
       const bg = colorForValue(val);
       const fg = textColorForBg(bg);
-      let trendHtml = '';
-      if (i === 0) trendHtml = '<span class="trend-same" title="No previous"></span>';
-      else {
+      let trendHtml = '<span class="trend-same">-</span>';
+      if (i > 0) {
         const prev = Number(rates[i-1].price_inc_vat_p_per_kwh);
         const diff = val - prev;
-        if (Math.abs(diff) < 0.001) trendHtml = '<span class="trend-same" title="Same price"></span>';
-        else if (diff > 0) trendHtml = '<span class="trend-up" title="Higher">▲</span>';
-        else trendHtml = '<span class="trend-down" title="Lower">▼</span>';
+        if (Math.abs(diff) < 0.001) trendHtml = '<span class="trend-same">-</span>';
+        else if (diff > 0) trendHtml = '<span class="trend-up">▲</span>';
+        else trendHtml = '<span class="trend-down">▼</span>';
       }
       const now = Date.now();
       const isNow = now >= Date.parse(r.start) && now < Date.parse(r.end);
@@ -156,7 +122,6 @@ function render(rates){
     }).join('');
 }
 
-// load
 async function loadForPostcode(pc){
   statusEl.textContent='Resolving region…';
   const gsp=await getGspByPostcode(pc);

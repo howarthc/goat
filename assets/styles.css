@@ -3,20 +3,16 @@
   --bg: #ffffff;
   --fg: #121212;
   --muted: #666;
-  --card-radius: 14px;
 }
 *{box-sizing:border-box}
 body { margin:0; background:var(--bg); color:var(--fg); font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial, sans-serif; }
 header.site-header, main, footer { max-width: var(--max); margin: 0 auto; padding: 1rem; }
 h1 { margin: .25rem 0 0.75rem; font-size: clamp(1.4rem, 3.5vw, 2rem); }
-
 .postcode-form { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
 .postcode-form input{ font-size:1rem; padding:.6rem .7rem; border:1px solid #ccc; border-radius:.5rem }
 .postcode-form button{ padding:.6rem .9rem; border:1px solid #ccc; background:#f7f7f7; border-radius:.6rem; cursor:pointer }
 .postcode-form button:hover{ background:#efefef }
 #status{ margin-top:.25rem; min-height:1.1rem; color:var(--muted) }
-
-/* Top section */
 .top-table-wrap { margin-top: .5rem; }
 .top-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
 .top-table th { text-align: left; font-weight: 600; padding: .5rem .5rem; border-bottom: 1px solid #e8e8e8; }
@@ -24,27 +20,14 @@ h1 { margin: .25rem 0 0.75rem; font-size: clamp(1.4rem, 3.5vw, 2rem); }
 .top-table td:last-child { border-right: 0; }
 .top-time { font-size: .95rem; opacity: .95; }
 .top-price { font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 800; line-height: 1.15; }
-
-/* Chart */
-.chart-wrap { margin-top: 1rem; width: 100%; height: 440px; }
-#chart { width:100% !important; height:100% !important; display:block }
-
-/* Lower table */
 table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: .95rem; }
 th, td { border-bottom: 1px solid #eee; padding: .5rem; text-align: left; }
 tr:nth-child(even) td { background: #fafafa; }
 tr.now td { font-weight:700; outline: 2px solid #ffd24d; outline-offset: -2px; }
-td.price-cell { font-weight: 700; }
+td.price-cell { font-weight: 700; position: relative; }
 td.price-cell span.price-text { position: relative; z-index: 1; }
-td.price-cell { position: relative; }
-td.price-cell::before {
-  content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 4px;
-}
+td.price-cell::before { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 4px; }
 td.trend-cell { width: 64px; text-align: center; }
-.trend-up { color: #d94b3d; font-weight: 900; }
-.trend-down { color: #2e7d32; font-weight: 900; }
-.trend-same { display: inline-block; width: 16px; height: 16px; background: #ef8b1a; border-radius: 2px; }
-
-@media (min-width: 900px) {
-  .chart-wrap { height: 520px; }
-}
+.trend-up { color: #d94b3d; font-weight: 900; }     /* red ▲ */
+.trend-down { color: #2e7d32; font-weight: 900; }   /* green ▼ */
+.trend-same { color: #ef8b1a; font-weight: 900; }   /* orange - */

@@ -7,21 +7,18 @@ $gsp = isset($_GET['gsp']) ? strtoupper($_GET['gsp']) : null;
 if (!$gsp || !preg_match('/^[A-Z]$/', $gsp)) { http_response_code(400); echo json_encode(['error' => 'Valid gsp letter required']); exit; }
 $from = $_GET['from'] ?? null; $to = $_GET['to'] ?? null;
 
-// London-time windowed TTL
 $tz = new DateTimeZone('Europe/London');
 $now = new DateTime('now', $tz);
 $hour = (int)$now->format('H');
 $minute = (int)$now->format('i');
 $in_publish_window = ($hour === 15 && $minute >= 45) || ($hour === 16 && $minute <= 30);
-$RATES_TTL = $in_publish_window ? 180 : 3600; // 3m vs 60m
+$RATES_TTL = $in_publish_window ? 180 : 3600;
 
-// Default from/to if not supplied: from local midnight to +36h
 $start = $from ? new DateTime($from, $tz) : (new DateTime('today', $tz));
 $end   = $to   ? new DateTime($to,   $tz) : (clone $start)->modify('+36 hours');
 $pf = (clone $start)->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z');
 $pt = (clone $end)->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z');
 
-// Product list (12h)
 $productsKey='products-agile';
 $products = goat_cache_read($productsKey, 43200);
 if (!$products) { $products = goat_fetch('https://api.octopus.energy/v1/products/?brand=OCTOPUS_ENERGY&page_size=250'); if ($products) goat_cache_write($productsKey, $products); }
