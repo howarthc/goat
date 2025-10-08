@@ -1,24 +1,65 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GOAT: Greatest Octopus Agile Tracker — v2.0 (Edge API)</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="assets/styles.css?v=2.0">
-<meta name="theme-color" content="#0a0a0a"></head><body>
-<header class="site-header"><h1>GOAT: Greatest Octopus Agile Tracker</h1>
-<form id="loc" class="postcode-form" autocomplete="on">
-<label class="pc-wrap">Postcode <input id="postcode" name="postcode" required placeholder="SW1A 1AA" inputmode="text"></label>
-<button class="load-btn">Load rates</button></form>
-<div id="status" role="status" aria-live="polite"></div></header>
-<main><section class="top-table-wrap"><table class="top-table" aria-label="Current, Next, Cheapest and Most Expensive prices">
-<tr><th>Current</th><th>Next</th><th>Cheapest</th><th>Most Expensive</th></tr>
-<tr id="top-row">
-<td id="cell-current"><div class="top-time" id="current-time">--:--</div><div class="top-price" id="current-price">--</div></td>
-<td id="cell-next"><div class="top-time" id="next-time">--:--</div><div class="top-price" id="next-price">--</div></td>
-<td id="cell-cheapest"><div class="top-time" id="cheapest-time">--:--</div><div class="top-price" id="cheapest-price">--</div></td>
-<td id="cell-expensive"><div class="top-time" id="expensive-time">--:--</div><div class="top-price" id="expensive-price">--</div></td>
-</tr></table></section>
-<section><table id="grid" aria-label="Half-hourly prices"></table></section></main>
-<footer><small>Data © Octopus Energy Agile Tariff. Times are Europe/London. — GOAT by Christopher Howarth — v2.0</small></footer>
-<script src="assets/app.js?v=2.0"></script>
-<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js');</script>
-</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GOAT: Greatest Octopus Agile Tracker — v1.1</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="assets/styles.css?v=1.1">
+  <meta name="theme-color" content="#0a0a0a">
+</head>
+<body>
+  <header class="site-header">
+    <h1>GOAT: Greatest Octopus Agile Tracker</h1>
+    <form id="loc" class="postcode-form" autocomplete="on">
+      <label class="pc-wrap">Postcode
+        <input id="postcode" name="postcode" required placeholder="SW1A 1AA" inputmode="text">
+      </label>
+      <button class="load-btn">Load rates</button>
+    </form>
+    <div id="status" role="status" aria-live="polite"></div>
+  </header>
+
+  <main>
+    <section class="top-table-wrap">
+      <table class="top-table" aria-label="Current, Next, Cheapest and Most Expensive prices">
+        <tr>
+          <th>Current</th>
+          <th>Next</th>
+          <th>Cheapest</th>
+          <th>Most Expensive</th>
+        </tr>
+        <tr id="top-row">
+          <td id="cell-current">
+            <div class="top-time" id="current-time">--:--</div>
+            <div class="top-price" id="current-price">--</div>
+          </td>
+          <td id="cell-next">
+            <div class="top-time" id="next-time">--:--</div>
+            <div class="top-price" id="next-price">--</div>
+          </td>
+          <td id="cell-cheapest">
+            <div class="top-time" id="cheapest-time">--:--</div>
+            <div class="top-price" id="cheapest-price">--</div>
+          </td>
+          <td id="cell-expensive">
+            <div class="top-time" id="expensive-time">--:--</div>
+            <div class="top-price" id="expensive-price">--</div>
+          </td>
+        </tr>
+      </table>
+    </section>
+
+    <section>
+      <table id="grid" aria-label="Half-hourly prices"></table>
+    </section>
+  </main>
+
+  <footer>
+    <small>Data © Octopus Energy Agile Tariff. Times are Europe/London. — GOAT by Christopher Howarth — v1.1</small>
+  </footer>
+
+  <script src="assets/app.js?v=1.1"></script>
+  <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js'); </script>
+</body>
+</html>
